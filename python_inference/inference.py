@@ -9,7 +9,7 @@ def main(image_path):
     try:
         # Define paths relative to this script
         script_dir = os.path.dirname(__file__)
-        model_path = os.path.join(script_dir, '..', 'model_files', 'dental_yolov10_best.pt')
+        model_path = os.path.join(script_dir, '..', 'model_files', 'dental_yolov12s_best.pt')
         mapping_path = os.path.join(script_dir, '..', 'model_files', 'class_mapping.pkl')
         output_dir = os.path.join(script_dir, '..', 'public', 'processed')
         
