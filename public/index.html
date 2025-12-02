@@ -5,252 +5,999 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AI Dental Anomaly Detector</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <!-- **NEW**: SweetAlert2 Library -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link rel="preconnect" href="https://rsms.me/">
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
         <style>
         html { font-family: 'Inter', sans-serif; }
         @supports (font-variation-settings: normal) {
-          html { font-family: 'Inter var', sans-serif; }
+            html { font-family: 'Inter var', sans-serif; }
         }
-        .header-gradient {
-            background: linear-gradient(90deg, #1E40AF, #3B82F6);
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
+
+        .navbar-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 100%);
+        }
+
+        .card-modern {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
         .upload-area {
-            transition: all 0.2s ease-in-out;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
         .upload-area.dragover {
-            border-color: #2563EB;
-            background-color: #EFF6FF;
+            border-color: #667eea;
+            background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
             transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.25);
+        }
+
+        .feature-card {
+            transition: all 0.3s ease;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .footer-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .icon-bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .result-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            max-height: 500px;
+        }
+
+        .image-container {
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .image-container:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #667eea;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .zoom-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .zoom-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            cursor: grab;
+        }
+
+        .zoom-image:active {
+            cursor: grabbing;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .zoom-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .zoom-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .zoom-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .view-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .canvas-3d {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            display: none;
+            background: #1a1a2e;
+        }
+
+        .canvas-3d.active {
+            display: block;
+        }
+
+        .zoom-level {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .anomaly-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-image {
+            transform: scale(1);
+        }
+
+        .view-3d-container {
+            text-align: center;
+            padding: 40px;
+            background: #1a1a2e;
+            border-radius: 16px;
+        }
+
+        .anomaly-summary {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .anomaly-summary-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 1rem;
+            }
+            .hero-text h1 {
+                font-size: 1.75rem;
+            }
+            .hero-text p {
+                font-size: 0.95rem;
+            }
         }
     </style>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     </head>
-    <body class="bg-gray-50 text-gray-800 antialiased">
+    <body>
 
-        <!-- Header -->
-        <header class="header-gradient text-white shadow-md sticky top-0 z-10">
-            <div
-                class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-                <h1 class="text-xl sm:text-2xl font-bold tracking-tight">AI
-                    Dental Anomaly Detector</h1>
-                <p class="text-xs sm:text-sm opacity-90 font-medium">Powered by
-                    YOLOv10</p>
+        <!-- Navigation Bar -->
+        <nav class="navbar-gradient text-white sticky top-0 z-50 shadow-lg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <!-- Logo -->
+                    <div class="flex items-center space-x-3 cursor-pointer"
+                        onclick="navigateTo('home')">
+                        <div class="text-3xl">🦷</div>
+                        <div class="hidden sm:block">
+                            <h1
+                                class="text-xl sm:text-2xl font-bold">DentalAI</h1>
+                            <p class="text-xs opacity-75">Smart Diagnostics</p>
+                        </div>
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="#" onclick="navigateTo('home')"
+                            class="hover:opacity-80 transition font-medium">Home</a>
+                        <a href="#" onclick="navigateTo('detector')"
+                            class="hover:opacity-80 transition font-medium">Detector</a>
+                        <a href="#" onclick="scrollToFeatures()"
+                            class="hover:opacity-80 transition font-medium">Features</a>
+                        <a href="#" onclick="scrollToAbout()"
+                            class="hover:opacity-80 transition font-medium">About</a>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="md:hidden text-2xl"
+                        onclick="toggleMobileMenu()">☰</button>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div id="mobile-menu"
+                    class="mobile-menu md:hidden bg-purple-700 rounded-lg mb-2">
+                    <a href="#" onclick="navigateTo('home')"
+                        class="block px-4 py-2 hover:bg-purple-600 rounded">Home</a>
+                    <a href="#" onclick="navigateTo('detector')"
+                        class="block px-4 py-2 hover:bg-purple-600 rounded">Detector</a>
+                    <a href="#" onclick="scrollToFeatures()"
+                        class="block px-4 py-2 hover:bg-purple-600 rounded">Features</a>
+                    <a href="#" onclick="scrollToAbout()"
+                        class="block px-4 py-2 hover:bg-purple-600 rounded">About</a>
+                </div>
             </div>
-        </header>
+        </nav>
 
-        <!-- Main Content -->
-        <main class="container mx-auto p-4 sm:p-6 md:p-10">
-            <div
-                class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-4xl mx-auto">
-
+        <!-- Home Page Section -->
+        <div id="home-page" class="min-h-screen">
+            <!-- Hero Section -->
+            <section class="hero-gradient text-white py-12 sm:py-16 md:py-24">
                 <div
-                    class="bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-4 rounded-md mb-8"
-                    role="alert">
-                    <h3 class="font-bold text-lg mb-2">How this tool works:</h3>
-                    <p class="text-sm">
-                        This AI model is trained to identify potential anomalies
-                        in <strong>dental panoramic X-ray images</strong>. It
-                        can currently detect the following conditions:
-                        <span class="font-semibold">Cavity, Filling, Implant,
-                            and Impacted teeth.</span>
-                    </p>
-                    <p
-                        class="text-xs mt-3 font-semibold text-red-700 bg-red-100 p-2 rounded">
-                        Disclaimer: This tool is for educational purposes only
-                        and is not a substitute for professional medical advice.
-                    </p>
-                </div>
-
-                <!-- Upload Section -->
-                <div id="upload-section">
-                    <h2
-                        class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-2">Upload
-                        a Dental Radiograph</h2>
-                    <p class="text-center text-gray-500 mb-6">Drag & drop an
-                        image or click to select a file.</p>
-
-                    <form id="upload-form" class="space-y-6">
-                        <label for="file-upload"
-                            class="relative cursor-pointer group">
-                            <div id="upload-area"
-                                class="upload-area border-4 border-dashed border-gray-200 group-hover:border-gray-300 rounded-xl p-10 text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-400"
-                                    stroke="currentColor" fill="none"
-                                    viewBox="0 0 48 48" aria-hidden="true">
-                                    <path
-                                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8"
-                                        stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <div
-                                    class="mt-4 flex justify-center text-sm leading-6 text-gray-600">
-                                    <span
-                                        class="relative font-semibold text-blue-600 group-hover:text-blue-500">
-                                        <span>Upload a file</span>
-                                        <input id="file-upload" name="xrayImage"
-                                            type="file" class="sr-only"
-                                            accept="image/png, image/jpeg, image/jpg">
-                                    </span>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p id="filename"
-                                    class="text-xs leading-5 text-gray-500 mt-2 font-medium"></p>
-                            </div>
-                        </label>
-                        <button id="diagnose-btn" type="submit"
-                            class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center text-base">
-                            Diagnose Image
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Results Section -->
-                <div id="results-section" class="hidden mt-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                        <div>
-                            <h3
-                                class="text-lg sm:text-xl font-bold mb-3 text-center text-gray-700">Original
-                                Image</h3>
-                            <div
-                                class="bg-gray-100 rounded-lg overflow-hidden shadow-inner border">
-                                <img id="original-image" src
-                                    alt="Original X-ray"
-                                    class="w-full h-auto object-contain">
-                            </div>
+                    class="container mx-auto px-4 sm:px-6 lg:px-8 hero-section">
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                        <div class="hero-text">
+                            <h1
+                                class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight">
+                                Advanced Dental Diagnostics with AI
+                            </h1>
+                            <p
+                                class="text-base sm:text-lg md:text-xl mb-6 opacity-90">
+                                Leverage cutting-edge artificial intelligence to
+                                detect dental anomalies in panoramic X-ray
+                                images with unprecedented accuracy.
+                            </p>
+                            <button onclick="navigateTo('detector')"
+                                class="btn-secondary font-bold py-3 px-6 sm:px-8 rounded-xl text-base sm:text-lg">
+                                Start Analyzing 🚀
+                            </button>
                         </div>
-                        <div>
-                            <h3
-                                class="text-lg sm:text-xl font-bold mb-3 text-center text-gray-700">AI
-                                Detected Anomalies</h3>
-                            <div
-                                class="bg-gray-100 rounded-lg overflow-hidden shadow-inner border">
-                                <img id="processed-image" src
-                                    alt="Processed X-ray with detections"
-                                    class="w-full h-auto object-contain">
-                            </div>
+                        <div class="flex justify-center">
+                            <div class="text-8xl icon-bounce">🦷</div>
                         </div>
                     </div>
-                    <div class="text-center mt-8">
-                        <button id="reset-btn"
-                            class="bg-gray-600 text-white font-bold py-2 px-8 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300">Analyze
-                            Another Image</button>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section id="features-section"
+                class="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+                <div class="container mx-auto">
+                    <h2
+                        class="text-3xl sm:text-4xl font-bold text-center mb-4 result-title">Key
+                        Features</h2>
+                    <p
+                        class="text-center text-gray-600 mb-12 text-sm sm:text-base">Powered
+                        by advanced machine learning technology</p>
+
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                        <div class="feature-card">
+                            <div class="text-4xl mb-4">🤖</div>
+                            <h3
+                                class="text-xl font-bold mb-3 text-gray-800">AI-Powered
+                                Detection</h3>
+                            <p class="text-gray-600 text-sm">State-of-the-art
+                                machine learning model for accurate dental
+                                anomaly detection.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="text-4xl mb-4">⚡</div>
+                            <h3
+                                class="text-xl font-bold mb-3 text-gray-800">Fast
+                                Processing</h3>
+                            <p class="text-gray-600 text-sm">Get instant
+                                analysis results in seconds with our optimized
+                                processing engine.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="text-4xl mb-4">📊</div>
+                            <h3
+                                class="text-xl font-bold mb-3 text-gray-800">Detailed
+                                Analysis</h3>
+                            <p class="text-gray-600 text-sm">Comprehensive
+                                anomaly detection with visual overlays and
+                                detailed reports.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="text-4xl mb-4">🔒</div>
+                            <h3
+                                class="text-xl font-bold mb-3 text-gray-800">Secure
+                                & Private</h3>
+                            <p class="text-gray-600 text-sm">Your data is
+                                processed securely with enterprise-grade privacy
+                                protection.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="text-4xl mb-4">📱</div>
+                            <h3
+                                class="text-xl font-bold mb-3 text-gray-800">Mobile
+                                Optimized</h3>
+                            <p class="text-gray-600 text-sm">Fully responsive
+                                design works seamlessly on all devices and
+                                screen sizes.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="text-4xl mb-4">💡</div>
+                            <h3
+                                class="text-xl font-bold mb-3 text-gray-800">Easy
+                                to Use</h3>
+                            <p class="text-gray-600 text-sm">Intuitive interface
+                                designed for healthcare professionals and
+                                clinics.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detection Types Section -->
+            <section id="about-section"
+                class="bg-white py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+                <div class="container mx-auto">
+                    <h2
+                        class="text-3xl sm:text-4xl font-bold text-center mb-4 result-title">What
+                        We Detect</h2>
+                    <p
+                        class="text-center text-gray-600 mb-12 text-sm sm:text-base">Our
+                        AI model is trained to identify multiple dental
+                        conditions</p>
+
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="card-modern text-center p-6">
+                            <div class="text-5xl mb-3">🦠</div>
+                            <h3 class="font-bold text-gray-800 mb-2">Caries</h3>
+                            <p class="text-xs sm:text-sm text-gray-600">Tooth
+                                decay detection</p>
+                        </div>
+                        <div class="card-modern text-center p-6">
+                            <div class="text-5xl mb-3">🔴</div>
+                            <h3
+                                class="font-bold text-gray-800 mb-2">Infection</h3>
+                            <p class="text-xs sm:text-sm text-gray-600">Disease
+                                identification</p>
+                        </div>
+                        <div class="card-modern text-center p-6">
+                            <div class="text-5xl mb-3">⚙️</div>
+                            <h3
+                                class="font-bold text-gray-800 mb-2">Implant</h3>
+                            <p class="text-xs sm:text-sm text-gray-600">Implant
+                                analysis</p>
+                        </div>
+                        <div class="card-modern text-center p-6">
+                            <div class="text-5xl mb-3">💔</div>
+                            <h3
+                                class="font-bold text-gray-800 mb-2">Fractured</h3>
+                            <p class="text-xs sm:text-sm text-gray-600">Broken
+                                teeth detection</p>
+                        </div>
+                        <div class="card-modern text-center p-6">
+                            <div class="text-5xl mb-3">👑</div>
+                            <h3 class="font-bold text-gray-800 mb-2">Crown</h3>
+                            <p class="text-xs sm:text-sm text-gray-600">Crown
+                                analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Detector Page Section -->
+        <div id="detector-page" class="hidden min-h-screen">
+            <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+                <div class="card-modern p-6 sm:p-8 max-w-4xl mx-auto">
+
+                    <!-- Info Banner -->
+                    <div
+                        class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-indigo-500 p-4 sm:p-6 rounded-lg mb-8">
+                        <h3 class="font-bold text-lg mb-3 text-gray-800">ℹ️ How
+                            to Use</h3>
+                        <ul class="text-xs sm:text-sm text-gray-700 space-y-2">
+                            <li>✓ Upload a dental panoramic X-ray image (PNG,
+                                JPG, JPEG)</li>
+                            <li>✓ Our AI will analyze the image for
+                                anomalies</li>
+                            <li>✓ View the original and processed images
+                                side-by-side</li>
+                            <li>✓ Detected anomalies are highlighted with
+                                bounding boxes</li>
+                        </ul>
+                        <p
+                            class="text-xs font-semibold text-red-600 bg-red-50 p-3 rounded mt-4">
+                            ⚠️ Disclaimer: Educational use only. Not a
+                            substitute for professional medical advice.
+                        </p>
+                    </div>
+
+                    <!-- Upload Section -->
+                    <div id="upload-section">
+                        <h2
+                            class="text-2xl sm:text-3xl font-bold text-center mb-2 result-title">Upload
+                            X-Ray Image</h2>
+                        <p
+                            class="text-center text-gray-500 mb-8 text-sm sm:text-base">📄
+                            Drag & drop your dental radiograph or click to
+                            browse</p>
+
+                        <form id="upload-form" class="space-y-6">
+                            <label for="file-upload"
+                                class="relative cursor-pointer group">
+                                <div id="upload-area"
+                                    class="upload-area border-4 border-dashed border-gray-300 group-hover:border-purple-500 rounded-2xl p-8 sm:p-12 text-center transition-all">
+                                    <svg
+                                        class="mx-auto h-12 sm:h-16 w-12 sm:w-16 text-gray-400 group-hover:text-purple-500 icon-bounce"
+                                        stroke="currentColor" fill="none"
+                                        viewBox="0 0 48 48" aria-hidden="true">
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    <div
+                                        class="mt-4 flex flex-col sm:flex-row justify-center items-center text-xs sm:text-sm leading-6 text-gray-600 space-y-2 sm:space-y-0">
+                                        <span
+                                            class="relative font-semibold text-purple-600 group-hover:text-purple-500">
+                                            <span>📄 Upload a file</span>
+                                            <input id="file-upload"
+                                                name="xrayImage" type="file"
+                                                class="sr-only"
+                                                accept="image/png, image/jpeg, image/jpg">
+                                        </span>
+                                        <p class="sm:pl-1">or drag and drop</p>
+                                    </div>
+                                    <p id="filename"
+                                        class="text-xs leading-5 text-gray-500 mt-3 font-medium"></p>
+                                </div>
+                            </label>
+                            <button id="diagnose-btn" type="submit"
+                                class="btn-primary w-full text-white font-bold py-3 sm:py-4 px-4 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center text-base sm:text-lg">
+                                🔍 Analyze Image
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="results-section" class="hidden mt-8">
+                        <h2
+                            class="text-2xl sm:text-3xl font-bold text-center mb-8 result-title">Analysis
+                            Results ✅</h2>
+                        <div
+                            class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                            <div>
+                                <h3
+                                    class="text-lg sm:text-xl font-bold mb-4 text-center text-gray-700 flex items-center justify-center space-x-2">
+                                    <span>📷</span>
+                                    <span>Original Image</span>
+                                </h3>
+                                <div class="image-container">
+                                    <img id="original-image" src
+                                        alt="Original X-ray"
+                                        class="w-full h-auto object-contain">
+                                </div>
+                            </div>
+                            <div>
+                                <h3
+                                    class="text-lg sm:text-xl font-bold mb-4 text-center text-gray-700 flex items-center justify-center space-x-2">
+                                    <span>🔍</span>
+                                    <span>AI Detected Anomalies</span>
+                                </h3>
+                                <div
+                                    class="image-container cursor-pointer hover:shadow-2xl"
+                                    id="anomaly-thumb"
+                                    title="Click to view in full screen">
+                                    <img id="processed-image" src
+                                        alt="Processed X-ray with detections"
+                                        class="w-full h-auto object-contain">
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button onclick="openAnomalyModal()"
+                                        class="btn-primary text-white font-bold py-2 px-6 rounded-lg text-sm sm:text-base">
+                                        👁️ View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-10">
+                            <button id="reset-btn"
+                                class="btn-primary text-white font-bold py-3 px-6 sm:px-10 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-300 transition-all duration-300">
+                                🔄 Analyze Another Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Anomaly Modal -->
+        <div id="anomalyModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="text-2xl font-bold text-gray-800">🔍 Anomaly
+                        Viewer</h2>
+                    <button class="modal-close-btn"
+                        onclick="closeAnomalyModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <!-- 2D View (Main View) -->
+                    <div id="view-2d" class="active">
+                        <div class="zoom-container">
+                            <img id="modal-image" src alt="Anomaly Detail"
+                                class="zoom-image modal-image">
+                        </div>
+                        <div class="zoom-level" id="zoom-level">Zoom: 100%</div>
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" onclick="zoomIn()">🔍+ Zoom
+                                In</button>
+                            <button class="zoom-btn" onclick="zoomOut()">🔍-
+                                Zoom Out</button>
+                            <button class="zoom-btn" onclick="resetZoom()">↻
+                                Reset</button>
+                            <button class="zoom-btn" onclick="fitToScreen()">⇗
+                                Fit Screen</button>
+                        </div>
+                    </div>
+
+                    <!-- Anomaly Summary -->
+                    <div class="anomaly-summary">
+                        <h4 class="anomaly-summary-title">📊 Detected
+                            Anomalies</h4>
+                        <div class="modal-grid" id="anomaly-list">
+                            <div class="anomaly-badge">Caries</div>
+                            <div class="anomaly-badge">Infection</div>
+                            <div class="anomaly-badge">Impacted Teeth</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
 
-        <footer class="bg-gray-200 text-center py-5 mt-10">
-            <p class="text-sm text-gray-600">Developed by 2220769 IUB 2025</p>
+        <!-- Footer -->
+        <footer class="footer-gradient mt-12 py-8 sm:py-12">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                    <div>
+                        <h4
+                            class="font-bold mb-3 text-sm sm:text-base">About</h4>
+                        <p class="text-xs sm:text-sm opacity-75">Advanced
+                            AI-powered dental diagnostic tool for healthcare
+                            professionals.</p>
+                    </div>
+                    <div>
+                        <h4
+                            class="font-bold mb-3 text-sm sm:text-base">Features</h4>
+                        <ul class="text-xs sm:text-sm opacity-75 space-y-1">
+                            <li>✓ Real-time Analysis</li>
+                            <li>✓ Accurate Detection</li>
+                            <li>✓ Easy Integration</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4
+                            class="font-bold mb-3 text-sm sm:text-base">Support</h4>
+                        <p class="text-xs sm:text-sm opacity-75">For inquiries
+                            or support, please contact us.</p>
+                    </div>
+                </div>
+                <div class="border-t border-opacity-20 pt-6 text-center">
+                    <p class="text-xs sm:text-sm opacity-75">💡 AI Dental
+                        Detector © 2025 | All rights reserved</p>
+                    <p class="text-xs opacity-50 mt-2">Developed with ❤️ for
+                        Dental Diagnostics</p>
+                </div>
+            </div>
         </footer>
 
         <script>
-        // ... (Keep existing element selections)
-        const form = document.getElementById('upload-form');
-        const fileInput = document.getElementById('file-upload');
-        const uploadArea = document.getElementById('upload-area');
-        const filenameDisplay = document.getElementById('filename');
-        const resultsSection = document.getElementById('results-section');
-        const originalImage = document.getElementById('original-image');
-        const processedImage = document.getElementById('processed-image');
-        const resetBtn = document.getElementById('reset-btn');
+    // Navigation Functions
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('active');
+    }
 
-        // ... (Keep file selection and drag/drop listeners)
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                filenameDisplay.textContent = fileInput.files[0].name;
-                uploadArea.classList.add('border-blue-500', 'bg-blue-50');
-            }
-        });
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, preventDefaults, false)
-        });
-        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
-        uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('dragover'), false);
-        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'), false);
-        function handleDrop(e) {
-            uploadArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            fileInput.files = files;
-            if (fileInput.files.length > 0) {
-                 filenameDisplay.textContent = fileInput.files[0].name;
-                 uploadArea.classList.add('border-blue-500', 'bg-blue-50');
-            }
-        }
+    function navigateTo(page) {
+        const homePage = document.getElementById('home-page');
+        const detectorPage = document.getElementById('detector-page');
+        const mobileMenu = document.getElementById('mobile-menu');
         
-        // **UPDATED**: Form submission with SweetAlert2
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!fileInput.files[0]) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No File Selected',
-                    text: 'Please choose an image file before diagnosing.',
-                });
-                return;
-            }
+        mobileMenu.classList.remove('active');
+        
+        if (page === 'home') {
+            homePage.classList.remove('hidden');
+            detectorPage.classList.add('hidden');
+        } else if (page === 'detector') {
+            homePage.classList.add('hidden');
+            detectorPage.classList.remove('hidden');
+        }
+        window.scrollTo(0, 0);
+    }
 
-            const formData = new FormData();
-            formData.append('xrayImage', fileInput.files[0]);
+    function scrollToFeatures() {
+        const featuresSection = document.getElementById('features-section');
+        featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
 
-            // Show loading alert
+    function scrollToAbout() {
+        const aboutSection = document.getElementById('about-section');
+        aboutSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // File Upload Logic
+    const form = document.getElementById('upload-form');
+    const fileInput = document.getElementById('file-upload');
+    const uploadArea = document.getElementById('upload-area');
+    const filenameDisplay = document.getElementById('filename');
+    const resultsSection = document.getElementById('results-section');
+    const originalImage = document.getElementById('original-image');
+    const processedImage = document.getElementById('processed-image');
+    const resetBtn = document.getElementById('reset-btn');
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            filenameDisplay.textContent = '✓ ' + fileInput.files[0].name;
+            uploadArea.classList.add('border-purple-500', 'bg-purple-50');
+        }
+    });
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('dragover'), false);
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'), false);
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        fileInput.files = files;
+        if (fileInput.files.length > 0) {
+            filenameDisplay.textContent = '✓ ' + fileInput.files[0].name;
+            uploadArea.classList.add('border-purple-500', 'bg-purple-50');
+        }
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!fileInput.files[0]) {
             Swal.fire({
-                title: 'Analyzing Image...',
-                text: 'Please wait while the AI processes the radiograph.',
-                imageUrl: 'https://media.tenor.com/JOkU-2l_x2IAAAAC/blue-loading-screen.gif',
-                imageWidth: 150,
-                imageHeight: 150,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
+                icon: 'warning',
+                title: 'No File Selected',
+                text: 'Please choose an image file before analyzing.',
+            });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('xrayImage', fileInput.files[0]);
+
+        Swal.fire({
+            title: 'Analyzing Image...',
+            text: 'Please wait while the AI processes your radiograph.',
+            imageUrl: 'https://media.tenor.com/JOkU-2l_x2IAAAAC/blue-loading-screen.gif',
+            imageWidth: 150,
+            imageHeight: 150,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
             });
 
-            try {
-                const response = await fetch('/predict', {
-                    method: 'POST',
-                    body: formData
-                });
+            const result = await response.json();
 
-                const result = await response.json();
-
-                if (!response.ok) {
-                    // This will catch errors sent from the server
-                    throw new Error(result.details || result.error || 'An unknown error occurred on the server.');
-                }
-                
-                // Close loading alert on success
-                Swal.close();
-
-                // Show results
-                originalImage.src = result.original + '?' + new Date().getTime();
-                processedImage.src = result.processed + '?' + new Date().getTime();
-
-                document.getElementById('upload-section').classList.add('hidden');
-                resultsSection.classList.remove('hidden');
-                
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Processing Failed',
-                    text: `Something went wrong. Please try another image. Details: ${error.message}`,
-                });
+            if (!response.ok) {
+                throw new Error(result.details || result.error || 'An unknown error occurred.');
             }
-        });
 
-        // Reset button functionality remains the same
-        resetBtn.addEventListener('click', () => {
-            resultsSection.classList.add('hidden');
-            document.getElementById('upload-section').classList.remove('hidden');
-            form.reset();
-            filenameDisplay.textContent = '';
-            uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
-            originalImage.src = '';
-            processedImage.src = '';
-        });
+            Swal.close();
 
-    </script>
+            originalImage.src = result.original + '?' + new Date().getTime();
+            processedImage.src = result.processed + '?' + new Date().getTime();
+
+            document.getElementById('upload-section').classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Processing Failed',
+                text: `Something went wrong. Please try another image. Details: ${error.message}`,
+            });
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        resultsSection.classList.add('hidden');
+        document.getElementById('upload-section').classList.remove('hidden');
+        form.reset();
+        filenameDisplay.textContent = '';
+        uploadArea.classList.remove('border-purple-500', 'bg-purple-50');
+        originalImage.src = '';
+        processedImage.src = '';
+    });
+
+    // Modal and Zoom Functions
+    let currentZoom = 1;
+    let is3DView = false;
+    let canvas3D = null;
+    let scene, camera, renderer;
+
+    function openAnomalyModal() {
+        const modal = document.getElementById('anomalyModal');
+        const modalImage = document.getElementById('modal-image');
+        modalImage.src = processedImage.src;
+        modal.classList.add('active');
+        currentZoom = 1;
+        updateZoomLevel();
+    }
+
+    function closeAnomalyModal() {
+        const modal = document.getElementById('anomalyModal');
+        modal.classList.remove('active');
+    }
+
+    function zoomIn() {
+        currentZoom += 0.2;
+        if (currentZoom > 5) currentZoom = 5;
+        applyZoom();
+    }
+
+    function zoomOut() {
+        currentZoom -= 0.2;
+        if (currentZoom < 0.5) currentZoom = 0.5;
+        applyZoom();
+    }
+
+    function resetZoom() {
+        currentZoom = 1;
+        applyZoom();
+    }
+
+    function fitToScreen() {
+        const container = document.querySelector('.zoom-container');
+        const image = document.getElementById('modal-image');
+        
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        
+        const imageWidth = image.naturalWidth;
+        const imageHeight = image.naturalHeight;
+        
+        const scaleX = containerWidth / imageWidth;
+        const scaleY = containerHeight / imageHeight;
+        
+        currentZoom = Math.min(scaleX, scaleY) * 0.95;
+        applyZoom();
+    }
+
+    function applyZoom() {
+        const image = document.getElementById('modal-image');
+        image.style.transform = `scale(${currentZoom})`;
+        updateZoomLevel();
+    }
+
+    function updateZoomLevel() {
+        const zoomPercent = Math.round(currentZoom * 100);
+        document.getElementById('zoom-level').textContent = `Zoom: ${zoomPercent}%`;
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('anomalyModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAnomalyModal();
+        }
+    });
+
+    // Add click handler for processed image thumbnail
+    document.getElementById('anomaly-thumb').addEventListener('click', openAnomalyModal);
+
+</script>
+
     </body>
 </html>
