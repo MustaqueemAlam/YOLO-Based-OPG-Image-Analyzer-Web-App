@@ -9,7 +9,7 @@ The application provides a simple, user-friendly interface for uploading an imag
 ## 🚀 Key Features
 
 - **AI-Powered Detection**: Leverages a fine-tuned YOLOv10 model to identify dental anomalies
-- **Supported Detections**: Trained to detect **Cavity, Filling, Implant, and Impacted Teeth**
+- **Supported Detections**: Trained to detect **Healthy teeth, Infection, Impacted teeth, Broken Down Crown/Root, Fractured teeth and Dental Caries **
 - **Web Interface**: Clean, responsive, and easy-to-use interface built with **HTML, Tailwind CSS, and JavaScript**
 - **Backend Server**: Lightweight **Node.js + Express** server for image uploads and processing
 - **Side-by-Side Comparison**: Displays the **original** and **processed** images for clear analysis
@@ -24,7 +24,7 @@ The application provides a simple, user-friendly interface for uploading an imag
 
 This project was trained on the **Dental Radiography for Anomaly Detection** dataset available on Kaggle.
 
-🔗 [Dental Radiography on Kaggle](https://www.kaggle.com/datasets/imtkaggleteam/dental-radiography)
+🔗 [Panoramic Dental Xray Dataset on Kaggle](https://www.kaggle.com/datasets/daverattan/dental-xrary-tfrecords)
 
 ## ⚙️ Getting Started
 
@@ -61,7 +61,7 @@ The final structure should look like this:
 ```plaintext
 /dental-detector-app/
 ├── 📂 model_files/
-│   ├── dental_yolov10_best.pt
+│   ├── dental_yolov12_best.pt
 │   └── class_mapping.pkl
 ...
 ```
@@ -100,11 +100,11 @@ npm install
 node server.js
 ```
 
-1. Open [http://localhost:7000](http://localhost:7000) in your browser
+1. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### How to Use
 
-1. Navigate to [http://localhost:7000](http://localhost:7000)
+1. Navigate to [http://localhost:3000](http://localhost:3000)
 2. Upload a dental panoramic X-ray image
 3. Click "Diagnose Image"
 4. View results showing original and processed images with detected anomalies
