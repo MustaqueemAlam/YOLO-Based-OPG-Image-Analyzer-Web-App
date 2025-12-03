@@ -1,6 +1,6 @@
-# 🦷 AI Dental Anomaly Detector
+# 🦷 DD.Ai
 
-This is a **web-based application** that uses a **YOLOv10 machine learning model** to detect potential anomalies in **dental panoramic X-ray images**.
+This is a **web-based application** that uses a **YOLO12s machine learning model** to detect potential anomalies in **dental panoramic X-ray images**.
 
 The application provides a simple, user-friendly interface for uploading an image and viewing the **AI-analyzed results** with bounding boxes drawn around detected issues.
 
@@ -16,7 +16,7 @@ The application provides a simple, user-friendly interface for uploading an imag
 
 ## 🛠️ Technology Stack
 
-- **Machine Learning**: Python, PyTorch, Ultralytics YOLOv10, OpenCV
+- **Machine Learning**: Python, PyTorch, Ultralytics YOLO12s, OpenCV
 - **Backend**: Node.js, Express.js
 - **Frontend**: HTML, Tailwind CSS, JavaScript, SweetAlert2
 
@@ -52,7 +52,7 @@ cd dental-detector-app
 Place your trained model files into the model_files directory:
 
 ```plaintext
-dental_yolov10_best.pt
+dental_yolov12_best.pt
 class_mapping.pkl
 ```
 
