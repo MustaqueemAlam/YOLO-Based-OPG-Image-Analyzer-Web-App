@@ -1,4 +1,4 @@
-# 🦷 DD.Ai
+# 🦷 DD.Ai : YOLO-Based OPG Image Analyzer Web App
 
 This is a **web-based application** that uses a **YOLO12s machine learning model** to detect potential anomalies in **dental panoramic X-ray images**.
 
